@@ -1,26 +1,45 @@
-import { Container, Flex } from '@chakra-ui/react'
-import React, { useEffect } from 'react'
-import Card from '../components/Card'
-import Footer from '../components/Footer'
-import Navbar from '../components/Navbar'
+import { Container, Flex } from "@chakra-ui/react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import Card from "../components/Card";
+import Footer from "../components/Footer";
+import Navbar from "../components/Navbar";
 
 const Main = () => {
-  
-  let user = JSON.parse(localStorage.getItem('current_user'));
+const [nurses, setNurses] = useState([]);
   useEffect(() => {
-    console.log(user)
-  }, []);
+    return () => {
+      axios({
+        method : 'get',
+        url : 'http://localhost:5000/getAllNurses'
+      }).then(
+        res => {
+          setNurses(res.data);
+          console.log(res.data);
+        });
+    }
+  }, [])
+  
   return (
     <>
-    <Flex direction={'column'} w={'100%'} h={'100vh'} position={'absolute'} justify={'space-between'}>
-    <Navbar />
-    <Container maxW={'90%'}>
-    <Card />
-    </Container>
-    <Footer />
-    </Flex>
+      <Flex
+        direction={"column"}
+        w={"100%"}
+        h={"100vh"}
+        position={"absolute"}
+        justify={"space-between"}
+      >
+        <Navbar />
+        <Container maxW={"90%"}>
+          {nurses.map((nurse) =>(
+            <Card Nurse={nurse} />
+          )
+          )}
+        </Container>
+        <Footer />
+      </Flex>
     </>
-  )
-}
+  );
+};
 
-export default Main
+export default Main;
