@@ -15,6 +15,8 @@ import {
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import bcrypt from "bcryptjs";
+import api from "../Hooks/api";
+import axios from "axios";
 
 const SigninForm = ({ users }) => {
   const [loading, setLoading] = useState(false);
@@ -35,13 +37,17 @@ const SigninForm = ({ users }) => {
   const submitButton = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const client = users.find((obj) => obj.email === form.email);
-    const passMatch = await bcrypt.compare(form.password, client.password);
-    console.log(passMatch);
+    const res = await api.get(`/getClient/${form.email}`);
+    console.log(res.data);
+    // const client = users.find((obj) => obj.email === form.email);
+    const passMatch = await bcrypt.compare(form.password, res.data[0].password);
     if (passMatch) {
-      localStorage.setItem("current_user", JSON.stringify(client));
-      setUser(client);
-      console.log(user);
+      const on = await axios({
+        method: "put",
+        url: `http://localhost:5000/changeStatusOn/${form.email}`,
+      });
+      localStorage.setItem("current_user", JSON.stringify(res.data[0]));
+      setUser(res.data[0]);
       setTimeout(() => {
         setLoading(false);
         toast({

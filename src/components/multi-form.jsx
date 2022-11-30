@@ -15,7 +15,6 @@ import {
   InputGroup,
   Textarea,
   FormHelperText,
-  InputRightElement,
   useToast,
   CheckboxGroup,
   Stack,
@@ -24,12 +23,11 @@ import {
   Radio,
   InputRightAddon,
 } from "@chakra-ui/react";
+import { nanoid } from "nanoid";
 import React, { useState } from "react";
+import api from "../Hooks/api";
 
-const Form1 = () => {
-  const [show, setShow] = React.useState(false);
-  const handleClick = () => setShow(!show);
-
+const Form1 = ({ user, handleInputData, values }) => {
   return (
     <>
       <Heading w="100%" textAlign={"center"} fontWeight="normal" mb="2%">
@@ -40,21 +38,37 @@ const Form1 = () => {
           <FormLabel htmlFor="first-name" fontWeight={"normal"}>
             First name
           </FormLabel>
-          <Input id="first-name" placeholder="First name" required />
+          <Input
+            id="first-name"
+            placeholder="First name"
+            value={user.f_name}
+            isDisabled
+          />
         </FormControl>
 
         <FormControl isRequired>
           <FormLabel htmlFor="last-name" fontWeight={"normal"}>
             Last name
           </FormLabel>
-          <Input id="last-name" placeholder="First name" />
+          <Input
+            id="last-name"
+            placeholder="Last name"
+            value={user.l_name}
+            isDisabled
+          />
         </FormControl>
       </Flex>
       <FormControl mt="2%" isRequired>
         <FormLabel htmlFor="email" fontWeight={"normal"}>
           Email address
         </FormLabel>
-        <Input id="email" type="email" placeholder="Email" />
+        <Input
+          id="email"
+          type="email"
+          placeholder="Email"
+          value={user.email}
+          isDisabled
+        />
         <FormHelperText>We'll never share your email.</FormHelperText>
       </FormControl>
 
@@ -64,14 +78,19 @@ const Form1 = () => {
         </FormLabel>
         <InputGroup size="md">
           <InputLeftAddon children="+216" />
-          <Input type="tel" placeholder="phone number" />
+          <Input
+            type="tel"
+            placeholder="phone number"
+            value={values.tel}
+            onChange={handleInputData("tel")}
+          />
         </InputGroup>
       </FormControl>
     </>
   );
 };
 
-const Form2 = () => {
+const Form2 = ({ handleInputData, values }) => {
   const gouv = ["Tunis", "Ben Arous", "Ariana", "Sousse", "Mahdia", "Sfax"];
   return (
     <>
@@ -100,6 +119,8 @@ const Form2 = () => {
           size="sm"
           w="full"
           rounded="md"
+          value={values.city}
+          onChange={handleInputData("city")}
         >
           {gouv.map((e) => (
             <option value={e.valueOf()}>{e.valueOf()}</option>
@@ -130,6 +151,8 @@ const Form2 = () => {
           size="sm"
           w="full"
           rounded="md"
+          value={values.address}
+          onChange={handleInputData("address")}
         />
       </FormControl>
 
@@ -156,6 +179,8 @@ const Form2 = () => {
           size="sm"
           w="full"
           rounded="md"
+          value={values.state}
+          onChange={handleInputData("state")}
         />
       </FormControl>
 
@@ -182,14 +207,15 @@ const Form2 = () => {
           size="sm"
           w="full"
           rounded="md"
+          value={values.zip}
+          onChange={handleInputData("zip")}
         />
       </FormControl>
     </>
   );
 };
 
-const Form3 = () => {
-  const [value, setValue] = React.useState("1");
+const Form3 = ({ handleInputData, values }) => {
   return (
     <>
       <Heading w="100%" textAlign={"center"} fontWeight="normal" mb={"2%"}>
@@ -205,15 +231,37 @@ const Form3 = () => {
               color: "gray.50",
             }}
           >
-            Services
+            Patient age
           </FormLabel>
-          <CheckboxGroup colorScheme="blue">
-            <Stack spacing={1} direction={"column"}>
-              <Checkbox value="Service1">Service 1</Checkbox>
-              <Checkbox value="service2">Service 2</Checkbox>
-              <Checkbox value="Service3">Service 3</Checkbox>
+
+          <RadioGroup name="Ptype">
+            <Stack direction="column">
+              <Radio value="4-15 Years Old" onChange={handleInputData("Ptype")}>
+                4-15 Years old
+              </Radio>
+              <Radio
+                value="15-25 Years Old"
+                onChange={handleInputData("Ptype")}
+              >
+                15-25 Years Old
+              </Radio>
+              <Radio
+                value="25-40 Years Old"
+                onChange={handleInputData("Ptype")}
+              >
+                25-40 Years Old
+              </Radio>
+              <Radio
+                value="40-60 Years Old"
+                onChange={handleInputData("Ptype")}
+              >
+                40-60 Years Old
+              </Radio>
+              <Radio value="+60 Years Old" onChange={handleInputData("Ptype")}>
+                +60 Years Old
+              </Radio>
             </Stack>
-          </CheckboxGroup>
+          </RadioGroup>
         </FormControl>
         <FormControl isRequired>
           <FormLabel
@@ -226,12 +274,55 @@ const Form3 = () => {
           >
             Services
           </FormLabel>
+          <CheckboxGroup colorScheme="blue">
+            <Stack spacing={1} direction={"column"}>
+              <Checkbox
+                value="Service 1"
+                onChange={handleInputData("services")}
+              >
+                Service 1
+              </Checkbox>
+              <Checkbox
+                value="Service 2"
+                onChange={handleInputData("services")}
+              >
+                Service 2
+              </Checkbox>
+              <Checkbox
+                value="Service 3"
+                onChange={handleInputData("services")}
+              >
+                Service 3
+              </Checkbox>
+            </Stack>
+          </CheckboxGroup>
+        </FormControl>
+        <FormControl isRequired>
+          <FormLabel
+            fontSize="sm"
+            fontWeight="md"
+            color="gray.700"
+            _dark={{
+              color: "gray.50",
+            }}
+          >
+            Shift Time
+          </FormLabel>
 
-          <RadioGroup onChange={setValue} value={value}>
+          <RadioGroup>
             <Stack direction="column">
-              <Radio value="1">Day Shift</Radio>
-              <Radio value="2">Night Shift</Radio>
-              <Radio value="3">Full Day</Radio>
+              <Radio value="Day Shift" onChange={handleInputData("shiftTime")}>
+                Day Shift
+              </Radio>
+              <Radio
+                value="Night Shift"
+                onChange={handleInputData("shiftTime")}
+              >
+                Night Shift
+              </Radio>
+              <Radio value="Full Day" onChange={handleInputData("shiftTime")}>
+                Full Day
+              </Radio>
             </Stack>
           </RadioGroup>
         </FormControl>
@@ -240,7 +331,13 @@ const Form3 = () => {
             Price
           </FormLabel>
           <InputGroup size="md">
-            <Input type="number" placeholder="Price" />
+            <Input
+              type="number"
+              placeholder="Price"
+              name="price"
+              value={values.price}
+              onChange={handleInputData("price")}
+            />
             <InputRightAddon children="DT/Day" />
           </InputGroup>
         </FormControl>
@@ -250,14 +347,24 @@ const Form3 = () => {
             <FormLabel htmlFor="start_date" fontWeight={"normal"}>
               Start
             </FormLabel>
-            <Input id="start_date" type={"date"} />
+            <Input
+              id="start_date"
+              type={"date"}
+              name={"startDate"}
+              onChange={handleInputData("startDate")}
+            />
           </FormControl>
 
           <FormControl isRequired>
             <FormLabel htmlFor="end_date" fontWeight={"normal"}>
               End
             </FormLabel>
-            <Input id="end_date" type={"date"} />
+            <Input
+              id="end_date"
+              type={"date"}
+              name="endDate"
+              onChange={handleInputData("endDate")}
+            />
           </FormControl>
         </Flex>
 
@@ -277,6 +384,8 @@ const Form3 = () => {
             rows={3}
             shadow="sm"
             focusBorderColor="brand.400"
+            name="message"
+            onBlur={handleInputData("message")}
             fontSize={{
               sm: "sm",
             }}
@@ -290,10 +399,62 @@ const Form3 = () => {
   );
 };
 
-export default function Multistep() {
+export default function Multistep({ user, nurse }) {
   const toast = useToast();
   const [step, setStep] = useState(1);
   const [progress, setProgress] = useState(33.33);
+
+  const [formData, setFormData] = useState({
+    id: nanoid(),
+    tel: user.tel,
+    city: user.city,
+    address: user.address,
+    state: user.state,
+    zip: user.zip,
+    Ptype: "",
+    services: "",
+    shiftTime: "",
+    price: null,
+    startDate: "",
+    endDate: "",
+    message: "",
+    emailPatient: user.email,
+    emailNurse: nurse,
+  });
+
+  // handling form input data by taking onchange value and updating our previous form data state
+  const handleInputData = (input) => (e) => {
+    console.log(formData);
+    // input value from the form
+    const { value } = e.target;
+
+    //updating for data state taking previous state and then adding new value to create new object
+    setFormData((prevState) => ({
+      ...prevState,
+      [input]: value,
+    }));
+  };
+
+  const submitButton = (e) => {
+    // e.preventDefault();
+    const request = {
+      ...formData,
+    };
+    const res = api.post("/createWork", request);
+    console.log(res);
+    if (res.status === 200) {
+      setTimeout(() => {
+        toast({
+          title: "Work submited.",
+          description:
+            "We've send those details to the Nurse chosen, Wait him/her confirmation.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      }, 3000);
+    }
+  };
   return (
     <>
       <Box
@@ -312,7 +473,17 @@ export default function Multistep() {
           mx="5%"
           isAnimated
         ></Progress>
-        {step === 1 ? <Form1 /> : step === 2 ? <Form2 /> : <Form3 />}
+        {step === 1 ? (
+          <Form1
+            user={user}
+            handleInputData={handleInputData}
+            values={formData}
+          />
+        ) : step === 2 ? (
+          <Form2 handleInputData={handleInputData} values={formData} />
+        ) : (
+          <Form3 handleInputData={handleInputData} values={formData} />
+        )}
         <ButtonGroup mt="5%" w="100%">
           <Flex w="100%" justifyContent="space-between">
             <Flex>
@@ -331,7 +502,14 @@ export default function Multistep() {
               </Button>
               <Button
                 w="7rem"
-                isDisabled={step === 3}
+                isDisabled={
+                  (step === 1 && formData.tel === "") ||
+                  (step === 2 && formData.city,
+                  formData.address,
+                  formData.state,
+                  formData.zip === "") ||
+                  step === 3
+                }
                 onClick={() => {
                   setStep(step + 1);
                   if (step === 3) {
@@ -348,17 +526,19 @@ export default function Multistep() {
             </Flex>
             {step === 3 ? (
               <Button
+                isDisabled={
+                  (formData.Ptype,
+                  formData.endDate,
+                  formData.services,
+                  formData.shiftTime,
+                  formData.startDate === "") ||
+                  formData.price === null
+                }
                 w="7rem"
                 colorScheme="green"
                 variant="solid"
                 onClick={() => {
-                  toast({
-                    title: "Account created.",
-                    description: "We've created your account for you.",
-                    status: "success",
-                    duration: 3000,
-                    isClosable: true,
-                  });
+                  submitButton();
                 }}
               >
                 Submit

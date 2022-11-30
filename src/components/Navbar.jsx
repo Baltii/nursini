@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Flex,
@@ -14,6 +14,7 @@ import {
   useDisclosure,
   Stack,
   useToast,
+  AvatarBadge,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import Notification from "../Notification";
@@ -22,26 +23,18 @@ import api from "../Hooks/api";
 import getAuth from "../Hooks/auth";
 import axios from "axios";
 
-const SignOut = (user) => {
-  const toast = useToast();
-  const res = axios({
+const SignOut = async (client) => {
+  const res = await axios({
     method: "put",
-    url: `http://localhost:5000/changeStatus/${user}`,
+    url: `http://localhost:5000/changeStatusOff/${client.email}`,
   });
   console.log(res);
-  if (res) { 
+
+  if (res.status == 200) {
     setTimeout(() => {
-      // localStorage.removeItem("current_user");
-      toast({
-        title: "Good Bye !",
-        description: "See you next time.",
-        status: "info",
-        duration: 2000,
-        isClosable: true,
-        colorScheme: "blue",
-      });
-      // window.location.reload();
-    }, 1000);
+      localStorage.removeItem("current_user");
+      window.location.reload();
+    }, 2000);
   }
 };
 
@@ -66,14 +59,13 @@ const NavLink = ({ children }) => {
 
 export default function Navbar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  let user = getAuth();
+  const [client, setClient] = useState([]);
+  const toast = useToast();
   useEffect(() => {
-    return () => {
-      console.log(user);
-    };
-  }, [user]);
+    setClient(getAuth());
+  }, []);
   let Status;
-  if (user != null) {
+  if (client != null) {
     Status = (
       <>
         <Notification />
@@ -85,15 +77,33 @@ export default function Navbar() {
             cursor={"pointer"}
             minW={0}
           >
-            <Avatar size={"sm"} src={user.img} />
+            <Avatar size={"sm"} src={client.img} />
           </MenuButton>
           <MenuList>
             <MenuItem fontWeight={"700"}>
-              {user.f_name + " " + user.l_name}
+              {client.f_name + " " + client.l_name}
+              <Box
+                as="div"
+                h="12px"
+                w="12px"
+                left={90}
+                position="relative"
+                bgColor={client.isActive === 1 ? "green.300" : "gray.300"}
+                borderRadius="50%"
+              ></Box>
             </MenuItem>
             <MenuDivider />
             <MenuItem
-              onClick={() => SignOut(user.email)}
+              onClick={() => {
+                SignOut(client);
+                toast({
+                  title: "Good Bye!",
+                  description: "See you next time.",
+                  status: "loading",
+                  duration: 2000,
+                  isClosable: true,
+                });
+              }}
               color={"red.400"}
               fontWeight={"700"}
             >
@@ -137,7 +147,7 @@ export default function Navbar() {
 
   return (
     <>
-      <Box bg={"white"} px={4} mb={"10"}>
+      <Box px={4} mb={"10"}>
         <Flex
           h={16}
           alignItems={"center"}

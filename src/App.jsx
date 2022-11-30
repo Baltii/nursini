@@ -12,6 +12,7 @@ function App() {
   let user = getAuth();
     return () => {
       console.log(user);
+      
     }
   }, [])
   

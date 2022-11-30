@@ -14,9 +14,11 @@ import {
   ModalBody,
   useDisclosure,
 } from "@chakra-ui/react";
+import getAuth from "../Hooks/auth";
 import Multistep from "./multi-form";
 
-const Card = ({Nurse}) => {
+const Card = ({ Nurse }) => {
+  const user = getAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
@@ -39,7 +41,7 @@ const Card = ({Nurse}) => {
             content: '""',
             w: 4,
             h: 4,
-            bg: {...Nurse.isActive === 1 ? "green.300" : "gray.300"},
+            bg: Nurse.isActive === 1 ? "green.300" : "gray.300",
             border: "2px solid white",
             rounded: "full",
             pos: "absolute",
@@ -48,21 +50,17 @@ const Card = ({Nurse}) => {
           }}
         />
         <Heading fontSize={"2xl"} fontFamily={"body"}>
-        {Nurse.f_name + " " + Nurse.l_name}
+          {Nurse.f_name + " " + Nurse.l_name}
         </Heading>
         <Text fontWeight={600} color={"gray.500"} mb={4}>
-          El Ouardia, Tunis
+          {Nurse.city + ", " + Nurse.state}
         </Text>
         <Text
           textAlign={"center"}
           color={useColorModeValue("gray.700", "gray.400")}
           px={3}
         >
-          Actress, musician, songwriter and artist. PM for work inquires or{" "}
-          <Link href={"#"} color={"blue.400"}>
-            #tag
-          </Link>{" "}
-          me in your posts
+          {Nurse.description}
         </Text>
         <Stack mt={8} direction={"row"} spacing={4}>
           <Button
@@ -104,7 +102,7 @@ const Card = ({Nurse}) => {
         <ModalContent>
           <ModalCloseButton />
           <ModalBody>
-            <Multistep />
+            <Multistep user={user} nurse={Nurse.email} />
           </ModalBody>
         </ModalContent>
       </Modal>
