@@ -1,6 +1,5 @@
 import { Box } from "@chakra-ui/react";
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import getAuth from "./Hooks/auth";
 import Main from "./pages/Main";

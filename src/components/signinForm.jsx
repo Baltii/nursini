@@ -12,7 +12,7 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import bcrypt from "bcryptjs";
 import api from "../Hooks/api";
@@ -20,7 +20,6 @@ import axios from "axios";
 
 const SigninForm = ({ users }) => {
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
   const toast = useToast();
   const navigate = useNavigate();
@@ -42,12 +41,11 @@ const SigninForm = ({ users }) => {
     // const client = users.find((obj) => obj.email === form.email);
     const passMatch = await bcrypt.compare(form.password, res.data[0].password);
     if (passMatch) {
-      const on = await axios({
+      axios({
         method: "put",
         url: `http://localhost:5000/changeStatusOn/${form.email}`,
       });
       localStorage.setItem("current_user", JSON.stringify(res.data[0]));
-      setUser(res.data[0]);
       setTimeout(() => {
         setLoading(false);
         toast({

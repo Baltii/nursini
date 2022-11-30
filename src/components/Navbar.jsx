@@ -14,12 +14,10 @@ import {
   useDisclosure,
   Stack,
   useToast,
-  AvatarBadge,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import Notification from "../Notification";
 import { Link } from "react-router-dom";
-import api from "../Hooks/api";
 import getAuth from "../Hooks/auth";
 import axios from "axios";
 
@@ -30,7 +28,7 @@ const SignOut = async (client) => {
   });
   console.log(res);
 
-  if (res.status == 200) {
+  if (res.status === 200) {
     setTimeout(() => {
       localStorage.removeItem("current_user");
       window.location.reload();

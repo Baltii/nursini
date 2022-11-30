@@ -5,7 +5,6 @@ import {
   Text,
   Stack,
   Button,
-  Link,
   useColorModeValue,
   Modal,
   ModalOverlay,
