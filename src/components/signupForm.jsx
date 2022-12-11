@@ -114,7 +114,6 @@ export default function SignupForm() {
           <Final
             submitButton={submitButton}
             prevStep={prevStep}
-            handleFormData={handleInputData}
             handlePassData={handlePassData}
             values={formData}
           />

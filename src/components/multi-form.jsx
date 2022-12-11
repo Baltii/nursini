@@ -26,6 +26,7 @@ import {
 import { nanoid } from "nanoid";
 import React, { useState } from "react";
 import api from "../Hooks/api";
+import { setAuth } from "../Hooks/auth";
 
 const Form1 = ({ user, handleInputData, values }) => {
   return (
@@ -274,28 +275,28 @@ const Form3 = ({ handleInputData, values }) => {
           >
             Services
           </FormLabel>
-          <CheckboxGroup colorScheme="blue">
+          <RadioGroup colorScheme="blue">
             <Stack spacing={1} direction={"column"}>
-              <Checkbox
-                value="Service 1"
+              <Radio
+                value="medical services"
                 onChange={handleInputData("services")}
               >
-                Service 1
-              </Checkbox>
-              <Checkbox
-                value="Service 2"
+                medical services
+              </Radio>
+              <Radio
+                value="home care services"
                 onChange={handleInputData("services")}
               >
-                Service 2
-              </Checkbox>
-              <Checkbox
-                value="Service 3"
+                home care services
+              </Radio>
+              <Radio
+                value="medical & home care services"
                 onChange={handleInputData("services")}
               >
-                Service 3
-              </Checkbox>
+                medical & home care services
+              </Radio>
             </Stack>
-          </CheckboxGroup>
+          </RadioGroup>
         </FormControl>
         <FormControl isRequired>
           <FormLabel
@@ -403,6 +404,7 @@ export default function Multistep({ user, nurse }) {
   const toast = useToast();
   const [step, setStep] = useState(1);
   const [progress, setProgress] = useState(33.33);
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     id: nanoid(),
@@ -435,19 +437,24 @@ export default function Multistep({ user, nurse }) {
     }));
   };
 
-  const submitButton = (e) => {
+  const submitButton = async (e) => {
     // e.preventDefault();
+    setLoading(true);
     const request = {
       ...formData,
     };
-    const res = api.post("/createWork", request);
+    const res = await api.post("/createWork", request);
     console.log(res);
-    if (res.status === 200) {
+    if (res != null) {
+      const cli = await api.get(`/getClient/${formData.emailPatient}`);
+      console.log(cli.data[0]);
+      setAuth(cli.data[0]);
       setTimeout(() => {
+        setLoading(false);
         toast({
           title: "Work submited.",
           description:
-            "We've send those details to the Nurse chosen, Wait him/her confirmation.",
+            "We've send those details to the Nurse chosen, Wait his/her confirmation.",
           status: "success",
           duration: 3000,
           isClosable: true,
@@ -504,10 +511,11 @@ export default function Multistep({ user, nurse }) {
                 w="7rem"
                 isDisabled={
                   (step === 1 && formData.tel === "") ||
-                  (step === 2 && formData.city,
-                  formData.address,
-                  formData.state,
-                  formData.zip === "") ||
+                  (step === 2 &&
+                    (formData.city,
+                    formData.address,
+                    formData.state,
+                    formData.zip === "")) ||
                   step === 3
                 }
                 onClick={() => {
@@ -531,8 +539,7 @@ export default function Multistep({ user, nurse }) {
                   formData.endDate,
                   formData.services,
                   formData.shiftTime,
-                  formData.startDate === "") ||
-                  formData.price === null
+                  formData.startDate === "") || formData.price === null
                 }
                 w="7rem"
                 colorScheme="green"
@@ -540,6 +547,7 @@ export default function Multistep({ user, nurse }) {
                 onClick={() => {
                   submitButton();
                 }}
+                isLoading={loading}
               >
                 Submit
               </Button>

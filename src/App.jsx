@@ -7,14 +7,6 @@ import SignIn from "./pages/signin";
 import SignUp from "./pages/signup";
 
 function App() {
-  useEffect(() => {
-  let user = getAuth();
-    return () => {
-      console.log(user);
-      
-    }
-  }, [])
-  
   return (
     <Box>
       <Router>

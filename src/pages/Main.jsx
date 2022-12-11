@@ -1,12 +1,18 @@
-import { Container, Flex } from "@chakra-ui/react";
+import { Box, Container, Flex } from "@chakra-ui/react";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import Card from "../components/Card";
 import Footer from "../components/Footer";
+import Hero from "../components/Hero";
 import Navbar from "../components/Navbar";
+import bg from '../assets/images/bg.png'
+import Nurses from "../components/Nurses";
 
 const Main = () => {
   const [nurses, setNurses] = useState([]);
+  const [search, setSearch] = useState("");
+  const searchVar = (input) => (e) => {
+    setSearch(input);
+  }
   useEffect(() => {
     axios({
       method: "get",
@@ -23,18 +29,16 @@ const Main = () => {
         direction={"column"}
         w={"100%"}
         h={"100vh"}
-        position={"absolute"}
         justify={"space-between"}
+        gap={7}
       >
+        <Box position={'absolute'}  bgImage={bg} w={"100%"}
+        h={"100vh"} bgRepeat={'no-repeat'} bgSize={'cover'} />
         <Navbar />
+        <Hero searchVar={searchVar} />
         <Container maxW={"90%"}>
-          <Flex direction={"row"} align={"space-between"} gap={"5"}>
-            {nurses
-              ? nurses.map((nurse) => (
-                  <Card key={nurse.email} px={"20"} Nurse={nurse} />
-                ))
-              : ""}
-          </Flex>
+          <Nurses nurses={nurses} filter={search} />
+          
         </Container>
         <Footer />
       </Flex>

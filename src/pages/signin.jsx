@@ -10,21 +10,15 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, {  } from "react";
 import SigninForm from "../components/signinForm";
 import backg from "../assets/images/background.png";
 import { MdCheckCircle } from "react-icons/md";
 import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
 import { HiHome } from "react-icons/hi";
-import api from "../Hooks/api";
 
 const SignIn = () => {
-  const [users, setUsers] = useState([]);
-  useEffect(() => {
-    api.get("/getAllUsers").then((res) => setUsers(res.data));
-  }, []);
-
   return (
     <Box
       position={"absolute"}
@@ -87,7 +81,7 @@ const SignIn = () => {
             maxW={{ lg: "lg" }}
             boxShadow={"2xl"}
           >
-            <SigninForm users={users} />
+            <SigninForm />
           </Stack>
         </Container>
       </Box>

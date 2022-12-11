@@ -14,11 +14,9 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import validator from "validator";
-import bcrypt from "bcryptjs";
 
 const Final = ({
   submitButton,
-  handleFormData,
   handlePassData,
   prevStep,
   values,

@@ -16,9 +16,9 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
-import Notification from "../Notification";
+import Notification from "./Notification";
 import { Link } from "react-router-dom";
-import getAuth from "../Hooks/auth";
+import { getAuth } from "../Hooks/auth";
 import axios from "axios";
 
 const SignOut = async (client) => {
@@ -66,7 +66,7 @@ export default function Navbar() {
   if (client != null) {
     Status = (
       <>
-        <Notification />
+        <Notification user={client} />
         <Menu>
           <MenuButton
             as={Button}
@@ -117,10 +117,11 @@ export default function Navbar() {
         <Button
           as={"a"}
           fontSize={"sm"}
-          fontWeight={400}
+          fontWeight={700}
           variant={"link"}
           textDecoration={"none"}
           href={"/login"}
+          color={"white"}
         >
           Log In
         </Button>

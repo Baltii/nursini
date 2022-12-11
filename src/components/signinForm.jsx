@@ -18,7 +18,7 @@ import bcrypt from "bcryptjs";
 import api from "../Hooks/api";
 import axios from "axios";
 
-const SigninForm = ({ users }) => {
+const SigninForm = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const toast = useToast();
@@ -29,25 +29,39 @@ const SigninForm = ({ users }) => {
     password: "",
   });
 
+  // Function of changing values of form
   const inputHandler = (e) => {
     setform({ ...form, [e.target.name]: e.target.value });
   };
 
+  // function of submiting form
   const submitButton = async (e) => {
     e.preventDefault();
     setLoading(true);
+
+    // Getting User information from Database
     const res = await api.get(`/getClient/${form.email}`);
     console.log(res.data);
-    // const client = users.find((obj) => obj.email === form.email);
+
+    // Comparing the crypted password with the typed one from form
     const passMatch = await bcrypt.compare(form.password, res.data[0].password);
     if (passMatch) {
+      // Change Status of user to Online.
       axios({
         method: "put",
         url: `http://localhost:5000/changeStatusOn/${form.email}`,
       });
+
+      // Getting User information from Database updated
+      const res = await api.get(`/getClient/${form.email}`);
+
+      // Save infos in LocalStorage
       localStorage.setItem("current_user", JSON.stringify(res.data[0]));
       setTimeout(() => {
+        // Stop Loading button
         setLoading(false);
+
+        // Display a toast of succesed
         toast({
           title: "Connected!",
           description: "Have a nice day.",
@@ -55,11 +69,16 @@ const SigninForm = ({ users }) => {
           duration: 2000,
           isClosable: true,
         });
+
+        // Navigate to Home page
         navigate("/");
       }, 1000);
     } else {
       setTimeout(() => {
+        // Stop Loading button
         setLoading(false);
+
+        // Display a toast of error
         toast({
           title: "Error!",
           description: "You need to verify your email or password.",

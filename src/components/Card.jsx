@@ -13,7 +13,7 @@ import {
   ModalBody,
   useDisclosure,
 } from "@chakra-ui/react";
-import getAuth from "../Hooks/auth";
+import { getAuth } from "../Hooks/auth";
 import Multistep from "./multi-form";
 
 const Card = ({ Nurse }) => {
@@ -62,17 +62,26 @@ const Card = ({ Nurse }) => {
           {Nurse.description}
         </Text>
         <Stack mt={8} direction={"row"} spacing={4}>
-          <Button
-            flex={1}
-            fontSize={"sm"}
-            rounded={"full"}
-            _focus={{
-              bg: "gray.200",
-            }}
-            onClick={onOpen}
-          >
-            Contact
-          </Button>
+          {user == null ? (
+            ""
+          ) : user.type === "1" ? (
+            <Button
+              flex={1}
+              fontSize={"sm"}
+              rounded={"full"}
+              _focus={{
+                bg: "gray.200",
+              }}
+              onClick={onOpen}
+            >
+              Contact
+            </Button>
+          ) : user.type === "2" ? (
+            ""
+          ) : (
+            ""
+          )}
+
           <Button
             flex={1}
             fontSize={"sm"}
